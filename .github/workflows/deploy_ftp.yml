@@ -26,20 +26,15 @@ jobs:
           node-version: '20'
 
       # Bước 3: Tiến hành Deploy lên FTP/SFTP
-    # Bước 3: Tiến hành Deploy lên FTP/SFTP
       - name: 3. Deploy via FTP
-        # Sử dụng action chuyên dụng cho việc triển khai FTP
+        # ... (các dòng trên không đổi)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.0
         with:
-          # PHẢI SỬ DỤNG TÊN SECRETS ĐÃ ĐƯỢC THIẾT LẬP
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ secrets.FTP_REMOTE_PATH }}
-          
-          # Hoặc, đối với server-dir (vì nó là một chuỗi cố định không nhạy cảm), 
-          # bạn có thể viết trực tiếp:
-          # server-dir: /htdocs/
+          # Truyền các giá trị Secrets vào action
+          server: ${{ ftpupload.net }}
+          username: ${{ if0_40014870  }}
+          password: ${{ rSKmrD0WOQax }}
+          server-dir: ${{ /htdocs/ }}
           
           # Tùy chọn nâng cao (rất nên dùng nếu hosting hỗ trợ):
           # protocol: sftp  # Đổi sang SFTP để bảo mật hơn
