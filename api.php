@@ -1,9 +1,16 @@
 <?php
-header('Content-Type: text/plain'); // Đặt header để trình duyệt hiểu đây là văn bản thuần túy
+// Thiết lập header để trình duyệt/frontend biết đây là JSON
+header('Content-Type: application/json');
 
-$server_status = "ONLINE"; // Hoặc "OFFLINE", "MAINTENANCE"
-$active_players = rand(100, 5000); // Số người chơi ngẫu nhiên
-$game_version = "1.5.0"; // Phiên bản trò chơi
+// Khởi tạo một mảng dữ liệu (giống như từ database)
+$data = array(
+    'status_code' => 'OPERATIONAL',
+    'message' => 'High score service running smoothly.',
+    'version' => '2.1.0', // Phiên bản mới hơn
+    'active_players' => rand(2500, 7500), // Tạo số ngẫu nhiên
+    'timestamp' => date('Y-m-d H:i:s')
+);
 
-echo "Game Server Status: " . $server_status . " | Active Players: " . $active_players . " | Version: " . $game_version;
+// Chuyển mảng PHP thành chuỗi JSON và in ra
+echo json_encode($data);
 ?>
