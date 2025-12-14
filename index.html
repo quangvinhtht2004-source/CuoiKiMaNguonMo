@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Game Console</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>Student Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Press Start 2P', cursive;
-            background-color: #1b1b2f; /* Nền tối */
-            color: #ff00ff; /* Màu tím/hồng neon */
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6; /* Nền xám nhạt */
+            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,61 +18,83 @@
             padding: 20px;
         }
 
-        .game-console {
-            background-color: #000000; /* Nền đen */
-            border: 5px solid #ff00ff;
-            box-shadow: 0 0 20px #ff00ff; /* Hiệu ứng neon */
-            padding: 30px 40px;
-            max-width: 600px;
+        .dashboard-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 700px;
             width: 100%;
-            text-align: center;
-            border-radius: 0; /* Viền cứng */
+            text-align: left;
         }
 
         h1 {
-            color: #ffff00; /* Vàng rực rỡ */
-            text-shadow: 2px 2px 0 #8b008b; /* Bóng tím */
-            margin-bottom: 25px;
-            font-size: 1.5em;
-        }
-
-        .score-board {
-            background-color: #2c2c54; /* Nền bảng điểm */
-            padding: 15px;
-            border: 3px solid #00ffff; /* Viền xanh cyan */
+            color: #007bff; /* Màu xanh dương */
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
             margin-bottom: 20px;
+            font-size: 1.8em;
         }
 
-        .score-item {
+        .status-bar {
+            background-color: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .task-item {
             display: flex;
             justify-content: space-between;
-            font-size: 1em;
-            margin: 5px 0;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        .loading-text {
-            color: #ffaa00;
-            animation: blinker 1s steps(1) infinite;
+        .task-name {
+            font-weight: 500;
         }
 
-        @keyframes blinker {
-            50% { opacity: 0; }
+        .task-status {
+            font-size: 0.8em;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724; /* Xanh lá cây */
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404; /* Vàng cam */
+        }
+
+        .status-loading {
+            color: #007bff;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
-    <div class="game-console">
-        <h1>-- CYBER PONG HIGH SCORES --</h1>
+    <div class="dashboard-card">
+        <h1>Student Task Tracker</h1>
         
-        <div class="score-board">
-            <p class="loading-text" id="status-message">LOADING DATA...</p>
-            
-            <div id="high-score-list">
-                </div>
-            
+        <div class="status-bar">
+            Welcome, Student! API Status: <span id="api-status" class="status-loading">Loading...</span>
         </div>
-        
-        <p style="font-size: 0.7em; margin-top: 30px;">Server Status: <span id="server-status">N/A</span></p>
+
+        <h2>Upcoming Tasks</h2>
+        <ul class="task-list" id="task-container">
+            <li class="task-item"><span class="status-loading">Fetching tasks...</span></li>
+        </ul>
     </div>
 
     <script>
@@ -80,35 +102,38 @@
             fetch('api.php')
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('API request failed');
+                        throw new Error('API failed to load tasks');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    document.getElementById('status-message').style.display = 'none';
-                    document.getElementById('server-status').innerText = data.server_status;
-
-                    const listContainer = document.getElementById('high-score-list');
+                    document.getElementById('api-status').innerText = data.server_status;
+                    document.getElementById('api-status').classList.remove('status-loading');
                     
-                    if (data.scores && data.scores.length > 0) {
-                        data.scores.forEach((score, index) => {
-                            const scoreItem = document.createElement('div');
-                            scoreItem.className = 'score-item';
-                            scoreItem.innerHTML = `
-                                <span>${index + 1}. ${score.name}</span>
-                                <span>${score.score}</span>
+                    const container = document.getElementById('task-container');
+                    container.innerHTML = ''; // Clear loading message
+
+                    if (data.tasks && data.tasks.length > 0) {
+                        data.tasks.forEach(task => {
+                            const item = document.createElement('li');
+                            item.className = 'task-item';
+                            const statusClass = task.status === 'Completed' ? 'status-completed' : 'status-pending';
+                            
+                            item.innerHTML = `
+                                <span class="task-name">${task.name}</span>
+                                <span class="task-status ${statusClass}">${task.status}</span>
                             `;
-                            listContainer.appendChild(scoreItem);
+                            container.appendChild(item);
                         });
                     } else {
-                        listContainer.innerHTML = '<p style="color: #ff0000; font-size: 0.8em;">NO SCORES FOUND</p>';
+                        container.innerHTML = '<li class="task-item">No tasks scheduled. Enjoy your break!</li>';
                     }
                 })
                 .catch(error => {
-                    document.getElementById('status-message').innerText = 'ERROR: API OFFLINE';
-                    document.getElementById('status-message').style.color = '#ff0000';
-                    document.getElementById('server-status').innerText = 'OFFLINE';
-                    console.error('API Error:', error);
+                    document.getElementById('api-status').innerText = 'ERROR';
+                    document.getElementById('api-status').style.color = 'red';
+                    document.getElementById('task-container').innerHTML = '<li class="task-item"><span style="color: red;">Could not connect to database.</span></li>';
+                    console.error('Error fetching API:', error);
                 });
         });
     </script>

@@ -2,24 +2,19 @@
 // Thiết lập header để trả về JSON
 header('Content-Type: application/json');
 
-// Mảng chứa các điểm cao mô phỏng
-$high_scores = array(
-    array('name' => 'VINH', 'score' => rand(80000, 99999)),
-    array('name' => 'ALX', 'score' => rand(50000, 79999)),
-    array('name' => 'DEV', 'score' => rand(30000, 49999)),
-    array('name' => 'USER', 'score' => rand(10000, 29999)),
+// Mảng chứa các nhiệm vụ/bài tập của sinh viên
+$student_tasks = array(
+    array('name' => 'Complete Git/CI/CD Assignment', 'status' => 'Completed'),
+    array('name' => 'Review Database Concepts', 'status' => 'Pending'),
+    array('name' => 'Prepare Presentation Slides', 'status' => 'Pending'),
+    array('name' => 'Submit Final Project Proposal', 'status' => 'Completed'),
 );
 
-// Sắp xếp lại (từ cao xuống thấp)
-usort($high_scores, function($a, $b) {
-    return $b['score'] <=> $a['score'];
-});
-
+// Dữ liệu trạng thái hệ thống
 $system_data = array(
     'server_status' => 'ONLINE',
     'timestamp' => date('Y-m-d H:i:s'),
-    'game' => 'Cyber Pong',
-    'scores' => $high_scores
+    'tasks' => $student_tasks
 );
 
 // Chuyển mảng PHP thành chuỗi JSON
