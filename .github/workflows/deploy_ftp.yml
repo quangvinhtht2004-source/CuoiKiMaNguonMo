@@ -27,16 +27,20 @@ jobs:
 
       # Bước 3: Tiến hành Deploy lên FTP/SFTP
       - name: 3. Deploy via FTP
-        # ... (các dòng trên không đổi)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.0
         with:
-          # Truyền các giá trị Secrets vào action
-          server: ${{ ftpupload.net }}
-          username: ${{ if0_40014870  }}
-          password: ${{ rSKmrD0WOQax }}
-          server-dir: ${{ /htdocs/ }}
+          # SỬA LỖI CÚ PHÁP: PHẢI SỬ DỤNG CÚ PHÁP "secrets.TÊN_SECRET"
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
           
-          # Tùy chọn nâng cao (rất nên dùng nếu hosting hỗ trợ):
+          # SỬ DỤNG SECRET CHO ĐƯỜNG DẪN REMOTE (hoặc 'server-dir: /htdocs/')
+          server-dir: ${{ secrets.FTP_REMOTE_PATH }}
+          
+          # Đảm bảo bạn đã tạo 4 Secrets sau trên GitHub:
+          # FTP_HOST, FTP_USERNAME, FTP_PASSWORD, FTP_REMOTE_PATH
+          
+          # Tùy chọn nâng cao (nếu hosting hỗ trợ):
           # protocol: sftp  # Đổi sang SFTP để bảo mật hơn
           # port: 22        # Cổng SFTP thường là 22
 

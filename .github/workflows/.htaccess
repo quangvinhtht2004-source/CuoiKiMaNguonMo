@@ -1,14 +1,18 @@
-# Vô hiệu hóa caching trình duyệt cho các file tĩnh
-<IfModule mod_headers.c>
-    Header set Cache-Control "no-cache, no-store, must-revalidate"
-    Header set Pragma "no-cache"
-    Header set Expires "0"
-</IfModule>
+# Bật module Rewriting (Thường cần thiết cho các hosting)
+Options +FollowSymLinks
+RewriteEngine On
 
-# Hoặc thiết lập thời gian sống rất ngắn cho cache
-<filesMatch "\.(html|htm|php|js|css)$">
-    FileETag None
-    Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
-    Header set Pragma "no-cache"
-    Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
-</filesMatch>
+# ----------------------------------------------------
+# KHẮC PHỤC CACHING: BUỘC TRÌNH DUYỆT TẢI LẠI MỌI THỨ
+# ----------------------------------------------------
+
+<IfModule mod_headers.c>
+    # Ngăn chặn caching mạnh mẽ cho các file web động và tĩnh
+    <filesMatch "\.(html|htm|php|js|css|json)$">
+        FileETag None
+        # Vô hiệu hóa caching của trình duyệt và proxy
+        Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </filesMatch>
+</IfModule>
