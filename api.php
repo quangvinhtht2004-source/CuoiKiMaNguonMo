@@ -2,16 +2,23 @@
 // Thiết lập header để trả về JSON
 header('Content-Type: application/json');
 
-// Dữ liệu mô phỏng một hành tinh ngoài hệ Mặt trời (Exoplanet)
-$astro_data = array(
-    'server_status' => 'ONLINE',
-    'feed_timestamp' => date('Y-m-d H:i:s'),
-    'name' => 'Kepler-186f',
-    'discovery_date' => '2014-04-17',
-    'mass_earths' => 1.4, // Khối lượng gấp 1.4 lần Trái Đất
-    'distance_au' => 360 // Khoảng cách tính bằng Đơn vị Thiên văn (AU)
+// Dữ liệu mô phỏng trạng thái hệ thống game
+$status = 'ACTIVE'; // Hoặc 'MAINTENANCE', 'DOWN'
+$error_code = 'G-001'; 
+
+// Dùng ngẫu nhiên để mô phỏng một lỗi nhỏ không thường xuyên
+if (rand(1, 10) === 1) { // 10% khả năng bị lỗi
+    $status = 'MAINTENANCE';
+    $error_code = 'E-404';
+}
+
+$system_data = array(
+    'server_status' => $status,
+    'timestamp' => date('Y-m-d H:i:s'),
+    'error_code' => $error_code,
+    'message' => 'System diagnostics complete.'
 );
 
 // Chuyển mảng PHP thành chuỗi JSON
-echo json_encode($astro_data);
+echo json_encode($system_data);
 ?>

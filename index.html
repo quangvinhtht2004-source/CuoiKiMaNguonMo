@@ -3,133 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Astro Data Terminal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>Pixel System Alert</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Roboto Mono', monospace;
-            background-color: #0d0d1a; /* Xanh tím than đậm */
-            color: #00ffff; /* Xanh cyan neon */
+            font-family: 'Press Start 2P', cursive;
+            background-color: #333; /* Nền xám đậm */
+            color: #fff; /* Chữ trắng */
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            text-align: center;
         }
 
-        .terminal {
-            background-color: #1a1a33; /* Nền bảng điều khiển */
-            border: 2px solid #00ffff;
-            box-shadow: 0 0 10px #00ffff, 0 0 5px #00ffff inset;
-            padding: 40px 60px;
-            border-radius: 8px;
-            max-width: 800px;
+        .alert-box {
+            background-color: #c0c0c0; /* Nền xám nhạt (Windows 95/Arcade) */
+            border: 4px solid #000;
+            box-shadow: 4px 4px 0 #000; /* Đổ bóng cứng */
+            padding: 20px 30px;
+            max-width: 400px;
             width: 100%;
-        }
-
-        h1 {
-            color: #ffcc00; /* Vàng hổ phách */
-            text-shadow: 1px 1px 5px #ffcc00;
-            margin-bottom: 30px;
-            font-size: 1.8em;
-        }
-
-        .data-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
             text-align: left;
-            margin-top: 25px;
+        }
+
+        .alert-header {
+            background-color: #000080; /* Thanh tiêu đề màu xanh đậm */
+            color: #ffffff;
+            padding: 8px 10px;
+            margin: -20px -30px 20px -30px; /* Kéo dài ra viền */
             font-size: 1em;
-            line-height: 1.8;
-            border-top: 1px dashed #333;
-            padding-top: 20px;
+            text-align: left;
         }
 
-        .data-label {
-            color: #cccccc;
-        }
-        
-        .data-value {
-            color: #00ffff;
+        .alert-content {
+            font-size: 0.8em;
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
 
-        .status-loading {
-            color: #ff9900; /* Cam */
-            animation: pulse 1s infinite alternate;
+        .status-area {
+            border-top: 2px solid #000;
+            padding-top: 10px;
+            font-size: 0.7em;
+            color: #333;
         }
 
-        @keyframes pulse {
-            from { opacity: 1; }
-            to { opacity: 0.7; }
+        .status-ok { color: #008000; } /* Xanh lá cây */
+        .status-error { color: #ff0000; } /* Đỏ */
+
+        .loading-text {
+            color: #ffaa00; /* Vàng cam */
+            animation: blinker 1s steps(1) infinite;
         }
 
-        /* Responsive */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.4em;
-            }
-            .terminal {
-                padding: 20px 30px;
-            }
-            .data-grid {
-                grid-template-columns: 1fr; /* Stack cột trên di động */
-            }
+        @keyframes blinker {
+            50% { opacity: 0; }
+        }
+
+        /* Nút nhấn kiểu cũ */
+        .btn {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #c0c0c0;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            padding: 8px 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            color: #000;
+        }
+        .btn:active {
+            box-shadow: 1px 1px 0 #000; /* Hiệu ứng nhấn */
+            transform: translate(1px, 1px);
         }
     </style>
 </head>
 <body>
-    <div class="terminal">
-        <h1>-- GALACTIC DATA FEED --</h1>
-        <p class="status-loading" id="status-message">REQUESTING ASTRO DATA...</p>
+    <div class="alert-box">
+        <div class="alert-header">SYSTEM ALERT V1.0</div>
         
-        <div class="data-grid">
-            <div class="data-label">Planetary Name:</div>
-            <div class="data-value" id="planet-name">N/A</div>
-
-            <div class="data-label">Discovery Date:</div>
-            <div class="data-value" id="discovery-date">N/A</div>
-
-            <div class="data-label">Mass (Earths):</div>
-            <div class="data-value" id="mass">N/A</div>
-
-            <div class="data-label">Distance (AU):</div>
-            <div class="data-value" id="distance">N/A</div>
-            
-            <div class="data-label">Server Status:</div>
-            <div class="data-value" id="server-status">N/A</div>
+        <div class="alert-content">
+            <p>Processing critical game data...</p>
+            <p>Do not turn off your computer.</p>
         </div>
+        
+        <div class="status-area">
+            <p>API State: <span id="api-status" class="loading-text">CONNECTING...</span></p>
+            <p>Game Code: <span id="game-code">N/A</span></p>
+        </div>
+        
+        <a href="#" class="btn" id="ok-btn">OK</a>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('ok-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                alert("Action completed! This was loaded from your server.");
+            });
+
             fetch('api.php')
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('API failed with status ' + response.status);
+                        throw new Error('API request failed');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    document.getElementById('status-message').innerText = 'DATA DOWNLOAD COMPLETE';
-                    document.getElementById('status-message').classList.remove('status-loading');
+                    const statusSpan = document.getElementById('api-status');
+                    statusSpan.innerText = data.server_status;
+                    statusSpan.classList.remove('loading-text');
+                    statusSpan.classList.add(data.server_status === 'ACTIVE' ? 'status-ok' : 'status-error');
                     
-                    document.getElementById('planet-name').innerText = data.name;
-                    document.getElementById('discovery-date').innerText = data.discovery_date;
-                    document.getElementById('mass').innerText = data.mass_earths + ' M_Earth';
-                    document.getElementById('distance').innerText = data.distance_au + ' AU';
-                    document.getElementById('server-status').innerText = data.server_status;
+                    document.getElementById('game-code').innerText = data.error_code || 'G-001';
                 })
                 .catch(error => {
-                    document.getElementById('status-message').innerText = 'ERROR: DATA FEED OFFLINE';
-                    document.getElementById('status-message').classList.remove('status-loading');
-                    document.getElementById('status-message').style.color = '#ff0000';
-                    document.getElementById('server-status').innerText = 'OFFLINE';
-                    console.error('Error fetching API:', error);
+                    const statusSpan = document.getElementById('api-status');
+                    statusSpan.innerText = 'FAILED';
+                    statusSpan.classList.remove('loading-text');
+                    statusSpan.classList.add('status-error');
+                    document.getElementById('game-code').innerText = 'ERROR-99';
+                    console.error('API Error:', error);
                 });
         });
     </script>
