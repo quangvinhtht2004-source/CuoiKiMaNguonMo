@@ -3,110 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel System Alert</title>
+    <title>Pixel Game Console</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Press Start 2P', cursive;
-            background-color: #333; /* Nền xám đậm */
-            color: #fff; /* Chữ trắng */
+            background-color: #1b1b2f; /* Nền tối */
+            color: #ff00ff; /* Màu tím/hồng neon */
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
             padding: 20px;
-            box-sizing: border-box;
         }
 
-        .alert-box {
-            background-color: #c0c0c0; /* Nền xám nhạt (Windows 95/Arcade) */
-            border: 4px solid #000;
-            box-shadow: 4px 4px 0 #000; /* Đổ bóng cứng */
-            padding: 20px 30px;
-            max-width: 400px;
+        .game-console {
+            background-color: #000000; /* Nền đen */
+            border: 5px solid #ff00ff;
+            box-shadow: 0 0 20px #ff00ff; /* Hiệu ứng neon */
+            padding: 30px 40px;
+            max-width: 600px;
             width: 100%;
-            text-align: left;
+            text-align: center;
+            border-radius: 0; /* Viền cứng */
         }
 
-        .alert-header {
-            background-color: #000080; /* Thanh tiêu đề màu xanh đậm */
-            color: #ffffff;
-            padding: 8px 10px;
-            margin: -20px -30px 20px -30px; /* Kéo dài ra viền */
-            font-size: 1em;
-            text-align: left;
+        h1 {
+            color: #ffff00; /* Vàng rực rỡ */
+            text-shadow: 2px 2px 0 #8b008b; /* Bóng tím */
+            margin-bottom: 25px;
+            font-size: 1.5em;
         }
 
-        .alert-content {
-            font-size: 0.8em;
+        .score-board {
+            background-color: #2c2c54; /* Nền bảng điểm */
+            padding: 15px;
+            border: 3px solid #00ffff; /* Viền xanh cyan */
             margin-bottom: 20px;
-            line-height: 1.5;
         }
 
-        .status-area {
-            border-top: 2px solid #000;
-            padding-top: 10px;
-            font-size: 0.7em;
-            color: #333;
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1em;
+            margin: 5px 0;
         }
-
-        .status-ok { color: #008000; } /* Xanh lá cây */
-        .status-error { color: #ff0000; } /* Đỏ */
 
         .loading-text {
-            color: #ffaa00; /* Vàng cam */
+            color: #ffaa00;
             animation: blinker 1s steps(1) infinite;
         }
 
         @keyframes blinker {
             50% { opacity: 0; }
         }
-
-        /* Nút nhấn kiểu cũ */
-        .btn {
-            font-family: 'Press Start 2P', cursive;
-            background-color: #c0c0c0;
-            border: 2px solid #000;
-            box-shadow: 2px 2px 0 #000;
-            padding: 8px 15px;
-            cursor: pointer;
-            margin-top: 10px;
-            display: block;
-            text-align: center;
-            text-decoration: none;
-            color: #000;
-        }
-        .btn:active {
-            box-shadow: 1px 1px 0 #000; /* Hiệu ứng nhấn */
-            transform: translate(1px, 1px);
-        }
     </style>
 </head>
 <body>
-    <div class="alert-box">
-        <div class="alert-header">SYSTEM ALERT V1.0</div>
+    <div class="game-console">
+        <h1>-- CYBER PONG HIGH SCORES --</h1>
         
-        <div class="alert-content">
-            <p>Processing critical game data...</p>
-            <p>Do not turn off your computer.</p>
+        <div class="score-board">
+            <p class="loading-text" id="status-message">LOADING DATA...</p>
+            
+            <div id="high-score-list">
+                </div>
+            
         </div>
         
-        <div class="status-area">
-            <p>API State: <span id="api-status" class="loading-text">CONNECTING...</span></p>
-            <p>Game Code: <span id="game-code">N/A</span></p>
-        </div>
-        
-        <a href="#" class="btn" id="ok-btn">OK</a>
+        <p style="font-size: 0.7em; margin-top: 30px;">Server Status: <span id="server-status">N/A</span></p>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('ok-btn').addEventListener('click', (e) => {
-                e.preventDefault();
-                alert("Action completed! This was loaded from your server.");
-            });
-
             fetch('api.php')
                 .then(response => {
                     if (!response.ok) {
@@ -115,19 +85,29 @@
                     return response.json();
                 })
                 .then(data => {
-                    const statusSpan = document.getElementById('api-status');
-                    statusSpan.innerText = data.server_status;
-                    statusSpan.classList.remove('loading-text');
-                    statusSpan.classList.add(data.server_status === 'ACTIVE' ? 'status-ok' : 'status-error');
+                    document.getElementById('status-message').style.display = 'none';
+                    document.getElementById('server-status').innerText = data.server_status;
+
+                    const listContainer = document.getElementById('high-score-list');
                     
-                    document.getElementById('game-code').innerText = data.error_code || 'G-001';
+                    if (data.scores && data.scores.length > 0) {
+                        data.scores.forEach((score, index) => {
+                            const scoreItem = document.createElement('div');
+                            scoreItem.className = 'score-item';
+                            scoreItem.innerHTML = `
+                                <span>${index + 1}. ${score.name}</span>
+                                <span>${score.score}</span>
+                            `;
+                            listContainer.appendChild(scoreItem);
+                        });
+                    } else {
+                        listContainer.innerHTML = '<p style="color: #ff0000; font-size: 0.8em;">NO SCORES FOUND</p>';
+                    }
                 })
                 .catch(error => {
-                    const statusSpan = document.getElementById('api-status');
-                    statusSpan.innerText = 'FAILED';
-                    statusSpan.classList.remove('loading-text');
-                    statusSpan.classList.add('status-error');
-                    document.getElementById('game-code').innerText = 'ERROR-99';
+                    document.getElementById('status-message').innerText = 'ERROR: API OFFLINE';
+                    document.getElementById('status-message').style.color = '#ff0000';
+                    document.getElementById('server-status').innerText = 'OFFLINE';
                     console.error('API Error:', error);
                 });
         });

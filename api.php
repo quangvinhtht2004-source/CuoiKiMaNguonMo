@@ -2,21 +2,24 @@
 // Thiết lập header để trả về JSON
 header('Content-Type: application/json');
 
-// Dữ liệu mô phỏng trạng thái hệ thống game
-$status = 'ACTIVE'; // Hoặc 'MAINTENANCE', 'DOWN'
-$error_code = 'G-001'; 
+// Mảng chứa các điểm cao mô phỏng
+$high_scores = array(
+    array('name' => 'VINH', 'score' => rand(80000, 99999)),
+    array('name' => 'ALX', 'score' => rand(50000, 79999)),
+    array('name' => 'DEV', 'score' => rand(30000, 49999)),
+    array('name' => 'USER', 'score' => rand(10000, 29999)),
+);
 
-// Dùng ngẫu nhiên để mô phỏng một lỗi nhỏ không thường xuyên
-if (rand(1, 10) === 1) { // 10% khả năng bị lỗi
-    $status = 'MAINTENANCE';
-    $error_code = 'E-404';
-}
+// Sắp xếp lại (từ cao xuống thấp)
+usort($high_scores, function($a, $b) {
+    return $b['score'] <=> $a['score'];
+});
 
 $system_data = array(
-    'server_status' => $status,
+    'server_status' => 'ONLINE',
     'timestamp' => date('Y-m-d H:i:s'),
-    'error_code' => $error_code,
-    'message' => 'System diagnostics complete.'
+    'game' => 'Cyber Pong',
+    'scores' => $high_scores
 );
 
 // Chuyển mảng PHP thành chuỗi JSON
