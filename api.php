@@ -1,16 +1,17 @@
 <?php
-// Thiết lập header để trình duyệt/frontend biết đây là JSON
+// Thiết lập header để trả về JSON
 header('Content-Type: application/json');
 
-// Khởi tạo một mảng dữ liệu (giống như từ database)
-$data = array(
-    'status_code' => 'OPERATIONAL',
-    'message' => 'High score service running smoothly.',
-    'version' => '2.1.0', // Phiên bản mới hơn
-    'active_players' => rand(2500, 7500), // Tạo số ngẫu nhiên
-    'timestamp' => date('Y-m-d H:i:s')
+// Dữ liệu mô phỏng một hành tinh ngoài hệ Mặt trời (Exoplanet)
+$astro_data = array(
+    'server_status' => 'ONLINE',
+    'feed_timestamp' => date('Y-m-d H:i:s'),
+    'name' => 'Kepler-186f',
+    'discovery_date' => '2014-04-17',
+    'mass_earths' => 1.4, // Khối lượng gấp 1.4 lần Trái Đất
+    'distance_au' => 360 // Khoảng cách tính bằng Đơn vị Thiên văn (AU)
 );
 
-// Chuyển mảng PHP thành chuỗi JSON và in ra
-echo json_encode($data);
+// Chuyển mảng PHP thành chuỗi JSON
+echo json_encode($astro_data);
 ?>
