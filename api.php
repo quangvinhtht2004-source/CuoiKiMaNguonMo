@@ -1,3 +1,3 @@
 <?php
-echo "Backend API đang hoạt động! (Phiên bản 1.0)";
+echo "Backend API đang hoạt động! (Phiên bản 1.1)";
 ?>
