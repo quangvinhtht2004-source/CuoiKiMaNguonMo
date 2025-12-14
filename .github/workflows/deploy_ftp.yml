@@ -1,0 +1,45 @@
+# Đặt tên cho Workflow của bạn
+name: Deploy PHP App to Shared Hosting via FTP
+
+# Xác định khi nào Workflow sẽ chạy
+on:
+  push:
+    branches:
+      - main # Workflow chỉ chạy khi có thay đổi được push lên nhánh 'main'
+  workflow_dispatch: # Cho phép chạy thủ công từ tab Actions trên GitHub
+
+jobs:
+  ftp_deploy:
+    # Chọn hệ điều hành để chạy quá trình này (máy ảo của GitHub)
+    runs-on: ubuntu-latest
+
+    steps:
+      # Bước 1: Lấy code từ GitHub Repository về máy ảo
+      - name: 1. Checkout repository code
+        uses: actions/checkout@v4
+      
+      # Bước 2: Thiết lập môi trường Node.js 
+      # Cần thiết vì action FTP-Deploy được viết bằng Node.js
+      - name: 2. Setup Node environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Bước 3: Tiến hành Deploy lên FTP/SFTP
+      - name: 3. Deploy via FTP
+        # Sử dụng action chuyên dụng cho việc triển khai FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.0
+        with:
+          # Truyền các giá trị Secrets vào action
+          server: ${{ ftpupload.net }}
+          username: ${{ if0_40014870  }}
+          password: ${{ rSKmrD0WOQax }}
+          server-dir: ${{ /htdocs/ }}
+          
+          # Tùy chọn nâng cao (rất nên dùng nếu hosting hỗ trợ):
+          # protocol: sftp  # Đổi sang SFTP để bảo mật hơn
+          # port: 22        # Cổng SFTP thường là 22
+
+      # Bước 4: Thông báo hoàn tất
+      - name: 4. Deployment completed
+        run: echo "Deployment to Shared Hosting finished successfully. Check your domain!"
