@@ -1,22 +1,20 @@
 <?php
-// Thiết lập header để trả về JSON
+// Trả về JSON
 header('Content-Type: application/json');
 
-// Mảng chứa các nhiệm vụ/bài tập của sinh viên
-$student_tasks = array(
-    array('name' => 'Complete Git/CI/CD Assignment', 'status' => 'Completed'),
-    array('name' => 'Review Database Concepts', 'status' => 'Pending'),
-    array('name' => 'Prepare Presentation Slides', 'status' => 'Pending'),
-    array('name' => 'Submit Final Project Proposal', 'status' => 'Completed'),
-);
+// Danh sách bài tập giả lập
+$tasks = [
+    ['name' => 'Báo cáo Git & GitHub', 'status' => 'Xong'],
+    ['name' => 'Cấu hình CI/CD Hosting', 'status' => 'Xong'],
+    ['name' => 'Thuyết trình nhóm', 'status' => 'Chưa'],
+    ['name' => 'Nộp bài cuối kỳ', 'status' => 'Chưa']
+];
 
-// Dữ liệu trạng thái hệ thống
-$system_data = array(
-    'server_status' => 'ONLINE',
-    'timestamp' => date('Y-m-d H:i:s'),
-    'tasks' => $student_tasks
-);
+// Dữ liệu trả về
+$response = [
+    'server_status' => 'Hoạt động tốt (Online)',
+    'tasks' => $tasks
+];
 
-// Chuyển mảng PHP thành chuỗi JSON
-echo json_encode($system_data);
+echo json_encode($response);
 ?>

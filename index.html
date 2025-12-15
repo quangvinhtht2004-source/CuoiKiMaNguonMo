@@ -3,139 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <title>Dashboard Sinh Viên</title>
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f7f6; /* Nền xám nhạt */
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            font-family: Arial, sans-serif; /* Font cơ bản, dễ đọc */
+            background-color: #f0f0f0;
             margin: 0;
             padding: 20px;
         }
 
-        .dashboard-card {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            max-width: 700px;
-            width: 100%;
-            text-align: left;
+        .container {
+            background-color: white;
+            max-width: 600px;
+            margin: 0 auto; /* Căn giữa */
+            padding: 20px;
+            border: 1px solid #ccc; /* Viền đơn giản */
         }
 
+        /* Yêu cầu của bạn: Tiêu đề lớp học */
         h1 {
-            color: #007bff; /* Màu xanh dương */
-            border-bottom: 2px solid #e0e0e0;
+            color: #d32f2f; /* Màu đỏ đô */
+            text-align: center;
+            border-bottom: 2px solid #333;
             padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-size: 1.8em;
         }
 
-        .status-bar {
-            background-color: #e9ecef;
-            padding: 10px 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-size: 0.9em;
+        h2 {
+            font-size: 1.2em;
+            color: #333;
+            margin-top: 20px;
         }
 
-        .task-list {
-            list-style: none;
+        .status-box {
+            background-color: #e3f2fd; /* Xanh nhạt */
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            list-style-type: none; /* Bỏ dấu chấm tròn */
             padding: 0;
         }
 
-        .task-item {
+        li {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
         }
 
-        .task-name {
-            font-weight: 500;
-        }
-
-        .task-status {
-            font-size: 0.8em;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
-        .status-completed {
-            background-color: #d4edda;
-            color: #155724; /* Xanh lá cây */
-        }
-
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404; /* Vàng cam */
-        }
-
-        .status-loading {
-            color: #007bff;
-            font-style: italic;
-        }
+        .tag-done { color: green; font-weight: bold; }
+        .tag-pending { color: orange; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="dashboard-card">
-        <h1>Student Task Tracker</h1>
-        
-        <div class="status-bar">
-            Welcome, Student! API Status: <span id="api-status" class="status-loading">Loading...</span>
+
+    <div class="container">
+        <h1>Chiều Thứ 2 - Ca 3</h1>
+
+        <div class="status-box">
+            Trạng thái Server: <span id="server-status">Đang tải...</span>
         </div>
 
-        <h2>Upcoming Tasks</h2>
-        <ul class="task-list" id="task-container">
-            <li class="task-item"><span class="status-loading">Fetching tasks...</span></li>
+        <h2>Danh sách công việc:</h2>
+        <ul id="task-list">
+            <li>Đang kết nối API...</li>
         </ul>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            fetch('api.php')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('API failed to load tasks');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById('api-status').innerText = data.server_status;
-                    document.getElementById('api-status').classList.remove('status-loading');
-                    
-                    const container = document.getElementById('task-container');
-                    container.innerHTML = ''; // Clear loading message
+        // Code Javascript đơn giản để lấy dữ liệu
+        fetch('api.php')
+            .then(res => res.json())
+            .then(data => {
+                // Hiển thị trạng thái server
+                document.getElementById('server-status').innerText = data.server_status;
+                
+                // Hiển thị danh sách task
+                const list = document.getElementById('task-list');
+                list.innerHTML = ''; // Xóa chữ đang tải
 
-                    if (data.tasks && data.tasks.length > 0) {
-                        data.tasks.forEach(task => {
-                            const item = document.createElement('li');
-                            item.className = 'task-item';
-                            const statusClass = task.status === 'Completed' ? 'status-completed' : 'status-pending';
-                            
-                            item.innerHTML = `
-                                <span class="task-name">${task.name}</span>
-                                <span class="task-status ${statusClass}">${task.status}</span>
-                            `;
-                            container.appendChild(item);
-                        });
-                    } else {
-                        container.innerHTML = '<li class="task-item">No tasks scheduled. Enjoy your break!</li>';
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('api-status').innerText = 'ERROR';
-                    document.getElementById('api-status').style.color = 'red';
-                    document.getElementById('task-container').innerHTML = '<li class="task-item"><span style="color: red;">Could not connect to database.</span></li>';
-                    console.error('Error fetching API:', error);
+                data.tasks.forEach(task => {
+                    const li = document.createElement('li');
+                    // Kiểm tra trạng thái để tô màu
+                    const statusClass = task.status === 'Xong' ? 'tag-done' : 'tag-pending';
+                    
+                    li.innerHTML = `
+                        <span>${task.name}</span>
+                        <span class="${statusClass}">${task.status}</span>
+                    `;
+                    list.appendChild(li);
                 });
-        });
+            })
+            .catch(err => {
+                document.getElementById('server-status').innerText = 'Lỗi kết nối!';
+                document.getElementById('server-status').style.color = 'red';
+            });
     </script>
 </body>
 </html>
